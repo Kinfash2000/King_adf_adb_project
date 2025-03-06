@@ -1,0 +1,22 @@
+{
+	"name": "ds_ipl_2008_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "github_adf_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "https://github.com/Kinfash2000/King_adf_adb_project/blob/main/ipl_2008.csv"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

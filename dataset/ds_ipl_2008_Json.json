@@ -1,0 +1,19 @@
+{
+	"name": "ds_ipl_2008_Json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "IPL_adls_project",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ipl_2008_json",
+				"fileSystem": "raw"
+			}
+		},
+		"schema": {}
+	}
+}
