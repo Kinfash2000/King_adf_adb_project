@@ -1,0 +1,9 @@
+{
+	"name": "IPL-ADF",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "1d69638b-ccec-4f17-8533-132e8f0c5f21",
+		"tenantId": "3595741a-0b3a-4361-8017-0e63ae91d766"
+	}
+}
