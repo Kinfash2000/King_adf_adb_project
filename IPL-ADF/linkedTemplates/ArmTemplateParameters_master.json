@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "IPL-ADF"
+		},
+		"IPL_adls_project_accountKey": {
+			"value": ""
+		},
+		"github_adf_ls_password": {
+			"value": ""
+		},
+		"IPL_adls_project_properties_typeProperties_url": {
+			"value": "https://adlsiplproject22.dfs.core.windows.net/"
+		},
+		"github_adf_ls_properties_typeProperties_url": {
+			"value": "https://github.com/Kinfash2000/King_adf_adb_project/raw/refs/heads/main/"
+		},
+		"github_adf_ls_properties_typeProperties_userName": {
+			"value": "kinfash2000"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
