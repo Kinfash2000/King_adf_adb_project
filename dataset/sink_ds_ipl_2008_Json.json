@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "ipl_2008_json",
+				"fileName": "ipl_2009_json",
 				"fileSystem": "raw"
 			}
 		},

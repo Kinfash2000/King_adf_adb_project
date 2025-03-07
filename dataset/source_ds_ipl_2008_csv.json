@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "HttpServerLocation",
-				"relativeUrl": "https://github.com/Kinfash2000/King_adf_adb_project/blob/main/ipl_2008.csv"
+				"relativeUrl": "ipl_2009.csv"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
