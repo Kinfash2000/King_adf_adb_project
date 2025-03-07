@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "HttpServerLocation",
-				"relativeUrl": "ipl_2009.csv"
+				"relativeUrl": "ipl_2008.csv"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
