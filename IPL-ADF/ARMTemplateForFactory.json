@@ -269,7 +269,10 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "ipl_json",
+						"fileName": {
+							"value": "@dataset().FilenameSink",
+							"type": "Expression"
+						},
 						"fileSystem": "raw"
 					}
 				},
