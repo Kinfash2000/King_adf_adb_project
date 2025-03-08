@@ -1,0 +1,19 @@
+{
+	"name": "sink_ds_ipl_2009_Json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "IPL_adls_project",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ipl_2009_json",
+				"fileSystem": "raw"
+			}
+		},
+		"schema": {}
+	}
+}
