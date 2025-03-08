@@ -402,66 +402,6 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data_2008_data",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "LookupFileNames",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "HttpReadSettings",
-									"requestMethod": "GET"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "source_ds_ipl_2008_csv_para",
-								"type": "DatasetReference",
-								"parameters": {
-									"FilenameS": "ipl_2008.csv"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "sink_ds_ipl_2008_Json_para",
-								"type": "DatasetReference",
-								"parameters": {
-									"FilenameSink": "ipl_2008.json"
-								}
-							}
-						]
-					},
-					{
 						"name": "LookupFileNames",
 						"type": "Lookup",
 						"dependsOn": [],
@@ -492,6 +432,87 @@
 							},
 							"firstRowOnly": false
 						}
+					},
+					{
+						"name": "ForEachFilenames",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LookupFileNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LookupFileNames').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Copy data_IPL_data",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "HttpReadSettings",
+												"requestMethod": "GET"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "source_ds_ipl_2008_csv_para",
+											"type": "DatasetReference",
+											"parameters": {
+												"FilenameS": {
+													"value": "@item().Files",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "sink_ds_ipl_2008_Json_para",
+											"type": "DatasetReference",
+											"parameters": {
+												"FilenameSink": {
+													"value": "@replace(item().Files, '.csv', '.json')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
 					}
 				],
 				"policy": {
@@ -500,9 +521,9 @@
 				"annotations": []
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_listoffiles')]",
 				"[concat(variables('factoryId'), '/datasets/source_ds_ipl_2008_csv_para')]",
-				"[concat(variables('factoryId'), '/datasets/sink_ds_ipl_2008_Json_para')]",
-				"[concat(variables('factoryId'), '/datasets/ds_listoffiles')]"
+				"[concat(variables('factoryId'), '/datasets/sink_ds_ipl_2008_Json_para')]"
 			]
 		}
 	]
