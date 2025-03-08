@@ -131,7 +131,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "HttpServerLocation",
-						"relativeUrl": "ipl_2008.csv"
+						"relativeUrl": "ipl 2008.csv"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
