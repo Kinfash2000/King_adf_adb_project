@@ -1,0 +1,61 @@
+{
+	"name": "full_ipl_ingest",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data_2008_data",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "source_ds_ipl_2008_csv_para",
+						"type": "DatasetReference",
+						"parameters": {
+							"FilenameS": "ipl_2008.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "sink_ds_ipl_2008_Json_para",
+						"type": "DatasetReference",
+						"parameters": {
+							"FilenameSink": "ipl_2008.json"
+						}
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
