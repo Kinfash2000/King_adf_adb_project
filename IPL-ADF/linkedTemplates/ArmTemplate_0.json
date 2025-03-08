@@ -94,6 +94,35 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/sink_ds_ipl_2008_Json_para')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "IPL_adls_project",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FilenameSink": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ipl_json",
+						"fileSystem": "raw"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/IPL_adls_project')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/sink_ds_ipl_2009_Json')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -132,6 +161,41 @@
 					"location": {
 						"type": "HttpServerLocation",
 						"relativeUrl": "ipl 2008.csv"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/github_adf_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/source_ds_ipl_2008_csv_para')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "github_adf_ls",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FilenameS": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": {
+							"value": "@dataset().FilenameS",
+							"type": "Expression"
+						}
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
@@ -293,6 +357,76 @@
 				"[concat(variables('factoryId'), '/datasets/sink_ds_ipl_2008_Json')]",
 				"[concat(variables('factoryId'), '/datasets/source_ds_ipl_2009_csv')]",
 				"[concat(variables('factoryId'), '/datasets/sink_ds_ipl_2009_Json')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/full_ipl_ingest')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data_2008_data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "source_ds_ipl_2008_csv_para",
+								"type": "DatasetReference",
+								"parameters": {
+									"FilenameS": "ipl_2008.csv"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "sink_ds_ipl_2008_Json_para",
+								"type": "DatasetReference",
+								"parameters": {
+									"FilenameSink": "ipl_2008.json"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/source_ds_ipl_2008_csv_para')]",
+				"[concat(variables('factoryId'), '/datasets/sink_ds_ipl_2008_Json_para')]"
 			]
 		}
 	]
