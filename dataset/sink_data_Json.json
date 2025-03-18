@@ -1,0 +1,23 @@
+{
+	"name": "sink_data_Json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "IPL_adls_project",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"SinkFilename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "raw"
+			}
+		},
+		"schema": {}
+	}
+}

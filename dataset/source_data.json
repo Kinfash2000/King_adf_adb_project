@@ -1,0 +1,30 @@
+{
+	"name": "source_data",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "github_adf_ls",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FilenameS": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": {
+					"value": "@dataset().FilenameS",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
