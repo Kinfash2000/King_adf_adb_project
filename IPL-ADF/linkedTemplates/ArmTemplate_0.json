@@ -103,6 +103,69 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/sink_data_Json')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "IPL_adls_project",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"SinkFilename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "raw"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/IPL_adls_project')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/source_data')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "github_adf_ls",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FilenameS": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": {
+							"value": "@dataset().FilenameS",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/github_adf_ls')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Ingest_IPL_Data')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -139,6 +202,87 @@
 							},
 							"firstRowOnly": false
 						}
+					},
+					{
+						"name": "AllFiles_iteration",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "lookup_IPL_files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('lookup_IPL_files').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Copy_IPL_data",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "HttpReadSettings",
+												"requestMethod": "GET"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "source_data",
+											"type": "DatasetReference",
+											"parameters": {
+												"FilenameS": {
+													"value": "@item().Files",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "sink_data_Json",
+											"type": "DatasetReference",
+											"parameters": {
+												"SinkFilename": {
+													"value": "replace(item().Files, '.csv', '.json')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
 					}
 				],
 				"policy": {
@@ -147,7 +291,9 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ListofFiles')]"
+				"[concat(variables('factoryId'), '/datasets/ListofFiles')]",
+				"[concat(variables('factoryId'), '/datasets/source_data')]",
+				"[concat(variables('factoryId'), '/datasets/sink_data_Json')]"
 			]
 		}
 	]
